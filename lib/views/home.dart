@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:wellpaperapp/data/data.dart';
 import 'package:wellpaperapp/model/catergories_model.dart';
+import 'package:wellpaperapp/model/wallpaper_model.dart';
+import 'package:wellpaperapp/views/search.dart';
 import 'package:wellpaperapp/views/widgets/widget.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,18 +17,30 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<CategorieModel> categories = [];
+  List<WallpaperModel> wallpapers = [];
+
+  TextEditingController searchController = new TextEditingController();
 
   getTrendingWallpaper() async {
     var response = await http.get(
         Uri.parse(
-          "https://api.pexels.com/v1/curated?per_page=1",
+          "https://api.pexels.com/v1/curated?per_page=20",
         ),
         headers: {"Authorization": apiKey});
-    print(response);
+    Map<String, dynamic> jsonData = jsonDecode(response.body);
+    jsonData["photos"].forEach((element) {
+      WallpaperModel wallpaperModel = new WallpaperModel();
+      wallpaperModel = WallpaperModel.fromMap(element);
+      wallpapers.add(wallpaperModel);
+    });
+    print(wallpapers);
+
+    setState(() {});
   }
 
   @override
   void initState() {
+    getTrendingWallpaper();
     categories = getCategories();
     super.initState();
   }
@@ -36,48 +52,61 @@ class _HomeState extends State<Home> {
         title: brandName(),
         elevation: 0.0,
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              padding: EdgeInsets.symmetric(horizontal: 18),
-              decoration: BoxDecoration(
-                  color: Color(0xfff5f8fd),
-                  borderRadius: BorderRadius.circular(30)),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "search Wellpaper",
-                        border: InputBorder.none,
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 18),
+                decoration: BoxDecoration(
+                    color: Color(0xfff5f8fd),
+                    borderRadius: BorderRadius.circular(30)),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          hintText: "search Wellpaper",
+                          border: InputBorder.none,
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(Icons.search),
-                ],
+                    GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Search(
+                                        searchQuery: searchController.text,
+                                      )));
+                        },
+                        child: Icon(Icons.search)),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Container(
-              height: 80,
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: ListView.builder(
-                shrinkWrap: true,
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  return CategoriesTile(
-                    title: categories[index].categorieName,
-                    imgUrl: categories[index].imgUrl,
-                  );
-                },
+              SizedBox(
+                height: 16,
               ),
-            )
-          ],
+              Container(
+                height: 80,
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    return CategoriesTile(
+                      title: categories[index].categorieName,
+                      imgUrl: categories[index].imgUrl,
+                    );
+                  },
+                ),
+              ),
+              WallpapersList(wallpapers: wallpapers, context: context)
+            ],
+          ),
         ),
       ),
     );
@@ -103,7 +132,10 @@ class CategoriesTile extends StatelessWidget {
               ),
             ),
             Container(
-              color: Colors.black26,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Colors.black26,
+              ),
               height: 50,
               width: 100,
               alignment: Alignment.center,
@@ -114,7 +146,7 @@ class CategoriesTile extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     fontSize: 15),
               ),
-            )
+            ),
           ],
         ));
   }
