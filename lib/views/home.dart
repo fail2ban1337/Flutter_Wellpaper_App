@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:wellpaperapp/data/data.dart';
 import 'package:wellpaperapp/model/catergories_model.dart';
 import 'package:wellpaperapp/model/wallpaper_model.dart';
-import 'package:wellpaperapp/views/catergorie.dart';
+import 'package:wellpaperapp/views/categorie.dart';
 import 'package:wellpaperapp/views/search.dart';
 import 'package:wellpaperapp/widgets/widget.dart';
 import 'package:http/http.dart' as http;
