@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:wellpaperapp/model/wallpaper_model.dart';
 
 Widget brandName() {
-  return Row(
+  return  Row(
     mainAxisAlignment: MainAxisAlignment.center,
-    children: [
+    children: <Widget>[
       Text(
         "Wallpaper",
-        style: TextStyle(color: Colors.black87),
+        style: TextStyle(color: Colors.black87, fontFamily: 'Overpass'),
       ),
       Text(
         "Hub",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: Colors.blue, fontFamily: 'Overpass'),
       )
     ],
   );
@@ -19,7 +19,7 @@ Widget brandName() {
 
 Widget WallpapersList({required List<WallpaperModel> wallpapers, context}) {
   return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16),
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     child: GridView.count(
       shrinkWrap: true,
       crossAxisCount: 2,

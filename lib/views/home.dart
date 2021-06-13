@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:wellpaperapp/data/data.dart';
 import 'package:wellpaperapp/model/catergories_model.dart';
 import 'package:wellpaperapp/model/wallpaper_model.dart';
+import 'package:wellpaperapp/views/catergorie.dart';
 import 'package:wellpaperapp/views/search.dart';
-import 'package:wellpaperapp/views/widgets/widget.dart';
+import 'package:wellpaperapp/widgets/widget.dart';
 import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
@@ -24,7 +25,7 @@ class _HomeState extends State<Home> {
   getTrendingWallpaper() async {
     var response = await http.get(
         Uri.parse(
-          "https://api.pexels.com/v1/curated?per_page=20",
+          "https://api.pexels.com/v1/curated?per_page=30",
         ),
         headers: {"Authorization": apiKey});
     Map<String, dynamic> jsonData = jsonDecode(response.body);
@@ -50,6 +51,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: brandName(),
+        centerTitle: true,
         elevation: 0.0,
       ),
       body: SingleChildScrollView(
@@ -118,36 +120,41 @@ class CategoriesTile extends StatelessWidget {
   CategoriesTile({@required this.title, @required this.imgUrl});
   @override
   Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.only(right: 4),
-        child: Stack(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                imgUrl.toString(),
+    return GestureDetector(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Categorie(categorieName: title.toString().toLowerCase())));
+      },
+      child: Container(
+          margin: EdgeInsets.only(right: 4),
+          child: Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  imgUrl.toString(),
+                  height: 50,
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.black26,
+                ),
                 height: 50,
                 width: 100,
-                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                child: Text(
+                  title.toString(),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15),
+                ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.black26,
-              ),
-              height: 50,
-              width: 100,
-              alignment: Alignment.center,
-              child: Text(
-                title.toString(),
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15),
-              ),
-            ),
-          ],
-        ));
+            ],
+          )),
+    );
   }
 }

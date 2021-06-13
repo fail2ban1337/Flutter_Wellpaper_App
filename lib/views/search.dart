@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:wellpaperapp/data/data.dart';
 import 'package:wellpaperapp/model/wallpaper_model.dart';
-import 'package:wellpaperapp/views/widgets/widget.dart';
+import 'package:wellpaperapp/widgets/widget.dart';
 import 'package:http/http.dart' as http;
 
 class Search extends StatefulWidget {
@@ -30,8 +30,6 @@ class _SearchState extends State<Search> {
       wallpaperModel = WallpaperModel.fromMap(element);
       wallpapers.add(wallpaperModel);
     });
-    print(wallpapers);
-
     setState(() {});
   }
 
@@ -39,6 +37,7 @@ class _SearchState extends State<Search> {
   void initState() {
     getSearchWallpaper(widget.searchQuery);
     super.initState();
+    searchController.text = widget.searchQuery;
   }
 
   @override
@@ -65,15 +64,16 @@ class _SearchState extends State<Search> {
                       child: TextField(
                         controller: searchController,
                         decoration: InputDecoration(
-                          prefixText: widget.searchQuery,
-                          hintText: widget.searchQuery.isNotEmpty
-                              ? ""
-                              : "search Wellpaper",
+                        
                           border: InputBorder.none,
                         ),
                       ),
                     ),
-                    GestureDetector(onTap: () {}, child: Icon(Icons.search)),
+                    GestureDetector(
+                        onTap: () {
+                          getSearchWallpaper(searchController.text);
+                        },
+                        child: Icon(Icons.search)),
                   ],
                 ),
               ),
